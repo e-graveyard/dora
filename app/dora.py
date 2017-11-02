@@ -48,7 +48,36 @@ except ImportError:
 class Response:
 
     def __init__(self):
-        pass
+        """Initializes the error responses"""
+        self._msg_target_not_found = {
+                'code': '404',
+                'status': 'error',
+                'message': 'The specified domain target was not found.'
+                }
+
+        self._msg_unknown_record_type = {
+                'code': '400',
+                'status': 'error',
+                'message': 'Bad Request: Unknown record type.'
+                }
+
+        self._msg_empty_response = {
+                'code': '204',
+                'status': 'success',
+                'message': 'The response does not contain an answer to the question.'
+                }
+
+    @property
+    def target_not_found(self):
+        return self._msg_target_not_found
+
+    @property
+    def unknown_record_type(self):
+        return self._msg_unknown_record_type
+
+    @property
+    def empty_response(self):
+        return self._msg_empty_response
 
 
 #------------------------------
