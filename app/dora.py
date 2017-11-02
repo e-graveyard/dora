@@ -77,3 +77,9 @@ def display_splash():
      return 'Hello!'
 
 
+if __name__ == '__main__':
+    # Needed for local execution.
+    application.run(debug        = True,
+                    host         = '0.0.0.0',
+                    use_reloader = False,
+                    port         = 8080)
