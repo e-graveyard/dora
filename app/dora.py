@@ -74,7 +74,7 @@ application = Flask(__name__)
 
 @application.route('/')
 def display_splash():
-     return 'Hello!'
+     return render_template('splash.html')
 
 
 if __name__ == '__main__':
