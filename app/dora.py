@@ -64,46 +64,8 @@ class ResolverException:
 # Resolver
 #------------------------------
 class Resolver:
-    """
-    """
 
-    def __init__(self, domain, record):
-        """
-        """
-        self._domain = domain
-        self._record = record
-        self._result = []
-        self._resolver = dns.resolver
-
-    def look(self):
-        if self._domain == None or self._record == None:
-            pass
-
-        elif self._record == 'A':
-            self._dig_a
-
-        elif self._record == 'MX':
-            self._dig_mx
-
-        elif self._record == 'NS':
-            self._dig_ns
-
-        elif self._record == 'TXT':
-            self._dig_txt
-
-        else:
-            pass
-
-    def _dig_a(self):
-        pass
-
-    def _dig_mx(self):
-        pass
-
-    def _dig_ns(self):
-        pass
-
-    def _dig_txt(self):
+    def __init__(self):
         pass
 
 
