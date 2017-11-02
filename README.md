@@ -1,2 +1,1 @@
-DNS Over REST API (DORA)
-========================
+docs/README.md
