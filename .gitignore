@@ -1,1 +1,10 @@
+# vim swap file
 *.swp
+
+# virtualenv
+app/bin
+app/include
+app/lib
+
+# pip log
+app/pip-selfcheck.json
