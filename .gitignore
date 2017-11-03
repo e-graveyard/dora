@@ -1,10 +1,18 @@
 # vim swap file
 *.swp
 
-# virtualenv
+# python virtual environment
+# (virtualenv)
 app/bin
 app/include
 app/lib
 
 # pip log
 app/pip-selfcheck.json
+
+# auxiliary scripts
+app/run.sh
+app/deploy.sh
+
+# deployment environment
+app/deploy
