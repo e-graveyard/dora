@@ -46,6 +46,8 @@ except ImportError:
 # Response
 #------------------------------
 class Response:
+    """
+    """
 
     def __init__(self):
         """Initializes the error responses"""
@@ -61,7 +63,7 @@ class Response:
                 'message': 'Bad Request: Unknown record type.'
                 }
 
-        self._msg_empty_response = {
+        self._msg_empty_answer = {
                 'code': '204',
                 'status': 'success',
                 'message': 'The response does not contain an answer to the question.'
@@ -76,8 +78,8 @@ class Response:
         return self._msg_unknown_record_type
 
     @property
-    def empty_response(self):
-        return self._msg_empty_response
+    def empty_answer(self):
+        return self._msg_empty_answer
 
 
 #------------------------------
@@ -85,19 +87,18 @@ class Response:
 #------------------------------
 class ResolverException(Exception):
     """Base exception class for Resolver exceptions"""
-    pass
 
 
 class TargetNotFound(ResolverException):
-    pass
+    """."""
 
 
 class UnknownRecordType(ResolverException):
-    pass
+    """."""
 
 
-class EmptyResponse(ResolverException):
-    pass
+class EmptyAnswer(ResolverException):
+    """."""
 
 
 #------------------------------
@@ -109,7 +110,7 @@ class Resolver:
 
     _domain = None
     _record = None
-    _response = None
+    _answer = None
     _resolver = None
 
     def __init__(self, domain, record):
@@ -117,29 +118,36 @@ class Resolver:
         """
         self._domain = domain
         self._record = record
-        self._response = []
+        self._answer = []
         self._resolver = dns.resolver
 
     def look(self):
         """
         """
-        if self._domain == None or self._record == None:
-            pass
+        try:
+            if self._record == 'A':
+                return self._dig_a()
 
-        elif self._record == 'A':
-            self._dig_a
+            elif self._record == 'MX':
+                return self._dig_mx()
 
-        elif self._record == 'MX':
-            self._dig_mx
+            elif self._record == 'NS':
+                return self._dig_ns()
 
-        elif self._record == 'NS':
-            self._dig_ns
+            elif self._record == 'TXT':
+                return self._dig_txt()
 
-        elif self._record == 'TXT':
-            self._dig_txt
+            else:
+                raise dns.rdatatype.UnknownRdatatype
 
-        else:
-            pass
+        except dns.resolver.NXDOMAIN:
+            raise TargetNotFound
+
+        except dns.resolver.NoAnswer:
+            raise EmptyAnswer
+
+        except dns.rdatatype.UnknownRdatatype:
+            raise UnknownRecordType
 
     def _dig_a(self):
         pass
@@ -151,12 +159,12 @@ class Resolver:
             mx_item_hostname = str(mx_data.exchange)
             mx_item_priority = mx_data.preference
 
-            self._result.append({
+            self._answer.append({
                 'hostname': mx_item_hostname,
                 'priority': mx_item_priority
                 })
 
-        return self._response
+        return self._answer
 
     def _dig_ns(self):
         ns_query = self._resolver.query(self._domain, self._record)
@@ -164,11 +172,11 @@ class Resolver:
 
         for ns_data in ns_answer:
             for ns_item in ns_data.items:
-                self._response.append({
+                self._answer.append({
                     'nameserver': ns_item.to_text()
                     })
 
-        return self._response
+        return self._answer
 
     def _dig_txt(self):
         txt_query = self._resolver.query(self._domain, self._record)
@@ -176,24 +184,54 @@ class Resolver:
 
         for txt_data in txt_answer:
             for txt_item in txt_data.items:
-                self._response.append({
+                self._answer.append({
                     'text': txt_item.to_text()
                     })
 
-        return self._response
+        return self._answer
 
 
+# ------------------------------
+
+response = Response()
 application = Flask(__name__)
 
 
 @application.route('/')
 def display_splash():
-     return render_template('splash.html')
+    return render_template('splash.html')
+
+
+@application.route('/dora/v1.0/<string:record_type>/<string:domain>')
+def perform_lookup(record_type, domain):
+    record_type = str.upper(record_type)
+
+    resolver = Resolver(domain, record_type)
+
+    try:
+        answer = resolver.look()
+        message = {
+                'data': {
+                    'records': answer
+                    }
+                }
+
+        return jsonify(message)
+
+    except TargetNotFound:
+        return jsonify(response.target_not_found)
+
+    except UnknownRecordType:
+        return jsonify(response.unknown_record_type)
+
+    except EmptyAnswer:
+        return jsonify(response.empty_answer)
 
 
 if __name__ == '__main__':
     # Needed for local execution.
     application.run(debug        = True,
                     host         = '0.0.0.0',
-                    use_reloader = False,
+                    use_reloader = True,
                     port         = 8080)
+
