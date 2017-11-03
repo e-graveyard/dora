@@ -83,10 +83,21 @@ class Response:
 #------------------------------
 # ResolverException
 #------------------------------
-class ResolverException:
+class ResolverException(Exception):
+    """Base exception class for Resolver exceptions"""
+    pass
 
-    def __init__(self):
-        pass
+
+class TargetNotFound(ResolverException):
+    pass
+
+
+class UnknownRecordType(ResolverException):
+    pass
+
+
+class EmptyResponse(ResolverException):
+    pass
 
 
 #------------------------------
