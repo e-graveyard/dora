@@ -43,43 +43,67 @@ except ImportError:
 
 
 #------------------------------
-# Response
+# Responder
 #------------------------------
-class Response:
-    """
-    """
+class Responder:
+    """."""
 
-    def __init__(self):
-        """Initializes the error responses"""
-        self._msg_target_not_found = {
-                'code': '404',
-                'status': 'error',
-                'message': 'The specified domain target was not found.'
-                }
+    _code = None
+    _message = None
+    _status = None
 
-        self._msg_unknown_record_type = {
-                'code': '400',
-                'status': 'error',
-                'message': 'Bad Request: Unknown record type.'
-                }
+    def make_response(self):
+        """."""
+        message = {
+                'code': self._code,
+                'message': self._message,
+                'status': self._status
+            }
 
-        self._msg_empty_answer = {
-                'code': '204',
-                'status': 'success',
-                'message': 'The response does not contain an answer to the question.'
-                }
+        return message
+
+    @property
+    def resource_not_found(self):
+        """."""
+
+        return self.make_response()
 
     @property
     def target_not_found(self):
-        return self._msg_target_not_found
+        """."""
+        self._code = 404
+        self._message = 'The specified domain target was not found.'
+        self._status = 'error'
+
+        return self.make_response()
 
     @property
     def unknown_record_type(self):
-        return self._msg_unknown_record_type
+        """."""
+        self._code = 400
+        self._message = 'Bad Request: Unknown record type.'
+        self._status = 'error'
+
+        return self.make_response()
 
     @property
     def empty_answer(self):
-        return self._msg_empty_answer
+        """."""
+        self._code = 204
+        self._message = 'The response does not contain an answer to the question.'
+        self._status = 'success'
+
+        return self.make_response()
+
+    @property
+    def success(self):
+        """."""
+        self._code = 200
+        self._message = 'DNS lookup is successful.'
+        self._status = 'success'
+
+        return self.make_response()
+
 
 
 #------------------------------
@@ -105,8 +129,7 @@ class EmptyAnswer(ResolverException):
 # Resolver
 #------------------------------
 class Resolver:
-    """
-    """
+    """."""
 
     _domain = None
     _record = None
@@ -114,16 +137,14 @@ class Resolver:
     _resolver = None
 
     def __init__(self, domain, record):
-        """
-        """
+        """."""
         self._domain = domain
         self._record = record
         self._answer = []
         self._resolver = dns.resolver
 
     def look(self):
-        """
-        """
+        """."""
         try:
             if self._record == 'A':
                 return self._dig_a()
@@ -150,9 +171,11 @@ class Resolver:
             raise UnknownRecordType
 
     def _dig_a(self):
+        """."""
         pass
 
     def _dig_mx(self):
+        """."""
         mx_query = self._resolver.query(self._domain, self._record)
 
         for mx_data in mx_query:
@@ -167,6 +190,7 @@ class Resolver:
         return self._answer
 
     def _dig_ns(self):
+        """."""
         ns_query = self._resolver.query(self._domain, self._record)
         ns_answer = ns_query.response.answer
 
@@ -179,6 +203,7 @@ class Resolver:
         return self._answer
 
     def _dig_txt(self):
+        """."""
         txt_query = self._resolver.query(self._domain, self._record)
         txt_answer = txt_query.response.answer
 
@@ -193,39 +218,66 @@ class Resolver:
 
 # ------------------------------
 
-response = Response()
+responder = Responder()
 application = Flask(__name__)
 
 
 @application.route('/')
 def display_splash():
+    """."""
     return render_template('splash.html')
 
 
 @application.route('/dora/v1.0/<string:record_type>/<string:domain>')
 def perform_lookup(record_type, domain):
+    """."""
     record_type = str.upper(record_type)
 
     resolver = Resolver(domain, record_type)
 
     try:
-        answer = resolver.look()
-        message = {
-                'data': {
-                    'records': answer
-                    }
-                }
-
-        return jsonify(message)
+        answer = {'records': resolver.look()}
+        response = responder.success
 
     except TargetNotFound:
-        return jsonify(response.target_not_found)
+        answer = None
+        response = responder.target_not_found
 
     except UnknownRecordType:
-        return jsonify(response.unknown_record_type)
+        answer = None
+        response = responder.unknown_record_type
 
     except EmptyAnswer:
-        return jsonify(response.empty_answer)
+        answer = None
+        response = responder.empty_answer
+
+    message = {
+            'code': response['code'],
+            'data': {
+                'answer': answer,
+                'question': {
+                        'target': domain,
+                        'record': record_type
+                    }
+                },
+            'message': response['message'],
+            'status': response['status']
+
+            }
+
+    return jsonify(message)
+
+
+@application.errorhandler(404)
+def not_found():
+    """."""
+    pass
+
+
+@application.errorhandler(500)
+def internal_error():
+    """."""
+    pass
 
 
 if __name__ == '__main__':
