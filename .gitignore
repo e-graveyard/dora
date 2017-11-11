@@ -16,3 +16,8 @@ app/deploy.sh
 
 # deployment environment
 app/deploy
+
+# sphinx
+docs/build
+docs/source
+docs/_themes
