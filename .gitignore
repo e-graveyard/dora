@@ -1,5 +1,10 @@
-# vim swap file
+# vim swap files
 *.swp
+
+# byte-compiled
+*.pyc
+__pycache__
+.cache
 
 # python virtual environment
 # (virtualenv)
@@ -17,7 +22,7 @@ app/deploy.sh
 # deployment environment
 app/deploy
 
-# sphinx
+# sphinx documentation
 docs/build
 docs/source
 docs/_themes
