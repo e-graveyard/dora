@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
+
 # -*- coding: utf-8 -*-
 
-"""
+__copyright__ = """
 ** MIT License **
 
 Copyright (c) 2017 Caian Rais Ertl
@@ -24,22 +26,124 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
 __program__ = 'dora'
 __version__ = 'alpha-0.1'
 __author__  = 'Caian R. Ertl'
 
 
+# Standard libraries. Should not fail.
+from argparse import ArgumentParser
+from argparse import RawTextHelpFormatter
 import sys
-import logging
+import textwrap
 
+# Required 3rd-parth libraries.
 try:
     from flask import Flask
     from flask import render_template
     from flask import jsonify
     import dns.resolver
-except ImportError:
+except ImportError as ierr:
     sys.exit(1)
+
+
+#------------------------------
+# CLI
+#------------------------------
+class CLI:
+    """Command-line interface handling class.
+
+    This class aims to create a command-line interface to controls
+    DORA's functionalities. It defines a `git`-like subcommand
+    structure, where the top-level command is dora itself and each
+    subcommand is a possible action (e.g. `dora start`).
+    """
+
+    _parser = None
+    _sub_parser = None
+
+    def __init__(self):
+        """."""
+        # Top-level parser
+        self._parser = ArgumentParser(
+                prog = __program__,
+                formatter_class = RawTextHelpFormatter,
+                description = textwrap.dedent('''\
+                        DORA\'s command-line interface.
+
+                        DORA is a web application that provides a simple
+                        API for DNS querying through a REST archictecture.
+                        '''),
+                epilog = textwrap.dedent('''\
+                        This is a Free and Open-Source Software (FOSS).
+                        Licensed under the MIT License.
+
+                        Project page: <https://github.com/caianrais/dora>
+                        '''))
+
+        self._parser.add_argument(
+                '-v', '--version',
+                action = 'version',
+                version = __version__,
+                help = 'show the application version and exit')
+
+        self._parser.add_argument(
+                '--copyright',
+                action = 'store_true',
+                dest = 'copyright',
+                help = 'show the copyright information and exit')
+
+        # Initializes the subparser
+        self._sub_parser = self._parser.add_subparsers(
+                dest = 'subcmd',
+                help = 'DORA commands')
+
+        # Start subcommand
+        subcmd_start = self._sub_parser.add_parser(
+                'start',
+                help = 'starts DORA\'s service')
+
+        # Start subcommand's arguments
+        subcmd_start.add_argument(
+                '-p', '--port',
+                action = 'store',
+                dest = 'port',
+                type = int,
+                help = textwrap.dedent('''\
+                        the port number the application will listen to
+                        default value: 80
+                        '''))
+
+        subcmd_start.add_argument(
+                '-d', '--debug',
+                action = 'store_true',
+                help = 'enable debug mode')
+
+    def act(self):
+        """."""
+        argp = self._parser.parse_args()
+        #print(vars(argp))
+        if argp.copyright:
+            self.show_copyright()
+        else:
+            if argp.subcmd == 'start':
+                if argp.port is None:
+                    argp.port = 8080
+                self._start(argp.port, argp.debug)
+
+            else:
+                print('DORA: missing operand.\n'
+                      'Try \'dora --help\' for more information.')
+                # self._parser.print_help()
+
+    def show_copyright(self):
+        print(__copyright__)
+
+    def _start(self, f_port, debug_mode):
+        application.run(debug        = debug_mode,
+                        host         = '0.0.0.0',
+                        use_reloader = True,
+                        port         = f_port)
 
 
 #------------------------------
@@ -282,8 +386,8 @@ def internal_error():
 
 if __name__ == '__main__':
     # Needed for local execution.
-    application.run(debug        = True,
-                    host         = '0.0.0.0',
-                    use_reloader = True,
-                    port         = 8080)
+    _cli = CLI()
+    _cli.act()
+
+    sys.exit(0)
 
