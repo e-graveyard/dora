@@ -1,6 +1,6 @@
 # D.O.R.A.
 
-[![Build Status](https://travis-ci.com/caianrais/dora.svg?token=ENjnKFCm1zJx3evAtMkF&branch=master)](https://travis-ci.com/caianrais/dora)
+[![Build Status](https://travis-ci.org/caianrais/dora.svg?branch=master)](https://travis-ci.org/caianrais/dora)
 [![Documentation Status](https://readthedocs.org/projects/dora/badge/?version=latest)](http://dora.readthedocs.io/en/latest/?badge=latest)
 [![GitHub license](https://img.shields.io/github/license/caianrais/dora.svg)](https://github.com/caianrais/dora/blob/master/LICENSE)
 
