@@ -47,14 +47,23 @@ try:
 
 except ImportError as e:
     print('DORA: impossible to import 3rd-party libraries.\n'
-            'Latest traceback: {0}'.format(e.args[0]))
+            'Latest traceback: {0}' . format(e.args[0]) )
 
     sys.exit(1)
 
 
-#------------------------------
-# CLI
-#------------------------------
+API_SCOPE = 'api'
+APP_SCOPE = 'app'
+
+
+#----------------------------------------------------
+#   ____   _       ___
+#  / ___| | |     |_ _|
+# | |     | |      | |
+# | |___ _| |___ _ | | _
+#  \____(_)_____(_)___(_)
+#
+#----------------------------------------------------
 class CLI:
     """Command-line interface handling class.
 
@@ -139,21 +148,26 @@ class CLI:
 
             else:
                 print('DORA: missing operand.\n'
-                      'Try \'dora --help\' for more information.')
+                        'Try \'dora --help\' for more information.')
 
     def show_copyright(self):
         print(__copyright__)
 
     def _start(self, f_port, debug_mode):
-        application.run(debug        = debug_mode,
-                        host         = '0.0.0.0',
-                        use_reloader = True,
-                        port         = f_port)
+        dora.run(debug = debug_mode,
+                host = '0.0.0.0',
+                use_reloader = True,
+                port = f_port)
 
 
-#------------------------------
-# Responder
-#------------------------------
+#----------------------------------------------------
+#  ____                                 _
+# |  _ \ ___  ___ _ __   ___  _ __   __| | ___ _ __
+# | |_) / _ \/ __| '_ \ / _ \| '_ \ / _` |/ _ \ '__|
+# |  _ <  __/\__ \ |_) | (_) | | | | (_| |  __/ |
+# |_| \_\___||___/ .__/ \___/|_| |_|\__,_|\___|_|
+#                |_|
+#----------------------------------------------------
 class Responder:
     """."""
 
@@ -161,21 +175,53 @@ class Responder:
     _message = None
     _status = None
 
-    def make_response(self):
+    def __init__(self, question = None, answer = None):
         """."""
-        message = {
-                'code': self._code,
-                'message': self._message,
-                'status': self._status
-            }
+        self._answer = answer
+        self._question = question
 
-        return message
+    def make_response(self, scope):
+        """."""
+
+        if scope == API_SCOPE:
+            if self._answer is not None:
+                self._answer = {'records': self._answer}
+
+            message = {
+                    'code': self._code,
+                    'data': {
+                        'answer': self._answer,
+                        'question': {
+                            'target': self._question['domain'],
+                            'record': self._question['record']
+                            }
+                        },
+                    'message': self._message,
+                    'status': self._status
+                    }
+
+        elif scope == APP_SCOPE:
+            message = {
+                    'code': self._code,
+                    'message': self._message,
+                    'status': self._status
+                    }
+
+        response = {
+                'code': self._code,
+                'message': message
+                }
+
+        return response
 
     @property
     def resource_not_found(self):
         """."""
+        self._code = 404
+        self._message = 'The specified API resource does not exists.'
+        self._status = 'error'
 
-        return self.make_response()
+        return self.make_response(APP_SCOPE)
 
     @property
     def target_not_found(self):
@@ -184,16 +230,16 @@ class Responder:
         self._message = 'The specified domain target was not found.'
         self._status = 'error'
 
-        return self.make_response()
+        return self.make_response(API_SCOPE)
 
     @property
-    def unknown_record_type(self):
+    def unknown_record(self):
         """."""
         self._code = 400
         self._message = 'Bad Request: Unknown record type.'
         self._status = 'error'
 
-        return self.make_response()
+        return self.make_response(API_SCOPE)
 
     @property
     def empty_answer(self):
@@ -202,7 +248,7 @@ class Responder:
         self._message = 'The response does not contain an answer to the question.'
         self._status = 'success'
 
-        return self.make_response()
+        return self.make_response(API_SCOPE)
 
     @property
     def success(self):
@@ -211,13 +257,17 @@ class Responder:
         self._message = 'DNS lookup is successful.'
         self._status = 'success'
 
-        return self.make_response()
+        return self.make_response(API_SCOPE)
 
 
-
-#------------------------------
-# ResolverException
-#------------------------------
+#----------------------------------------------------
+#  _____                    _   _
+# | ____|_  _____ ___ _ __ | |_(_) ___  _ __  ___
+# |  _| \ \/ / __/ _ \ '_ \| __| |/ _ \| '_ \/ __|
+# | |___ >  < (_|  __/ |_) | |_| | (_) | | | \__ \
+# |_____/_/\_\___\___| .__/ \__|_|\___/|_| |_|___/
+#                    |_|
+#----------------------------------------------------
 class ResolverException(Exception):
     """Base exception class for Resolver exceptions"""
 
@@ -234,9 +284,14 @@ class EmptyAnswer(ResolverException):
     """."""
 
 
-#------------------------------
-# Resolver
-#------------------------------
+#----------------------------------------------------
+#  ____                 _
+# |  _ \ ___  ___  ___ | |_   _____ _ __
+# | |_) / _ \/ __|/ _ \| \ \ / / _ \ '__|
+# |  _ <  __/\__ \ (_) | |\ V /  __/ |
+# |_| \_\___||___/\___/|_| \_/ \___|_|
+#
+#----------------------------------------------------
 class Resolver:
     """."""
 
@@ -245,10 +300,10 @@ class Resolver:
     _answer = None
     _resolver = None
 
-    def __init__(self, domain, record):
+    def __init__(self, question):
         """."""
-        self._domain = domain
-        self._record = record
+        self._domain = question['domain']
+        self._record = question['record']
         self._answer = []
         self._resolver = dns.resolver
 
@@ -325,66 +380,71 @@ class Resolver:
         return self._answer
 
 
-# ------------------------------
+#----------------------------------------------------
+#      _                                   _
+#   __| | ___  _ __ __ _   _ __ ___   __ _(_)_ __
+#  / _` |/ _ \| '__/ _` | | '_ ` _ \ / _` | | '_ \
+# | (_| | (_) | | | (_| |_| | | | | | (_| | | | | |
+#  \__,_|\___/|_|  \__,_(_)_| |_| |_|\__,_|_|_| |_|
+#
+#----------------------------------------------------
 
-responder = Responder()
-application = Flask(__name__)
+dora = Flask(__name__)
 
 
-@application.route('/')
+@dora.route('/')
 def display_splash():
     """."""
     return render_template('splash.html')
 
 
-@application.route('/dora/v1.0/<string:record_type>/<string:domain>')
-def perform_lookup(record_type, domain):
+@dora.route('/dora/<string:record>/<string:domain>', methods = ['GET'])
+def perform_lookup(record, domain):
     """."""
-    record_type = str.upper(record_type)
-
-    resolver = Resolver(domain, record_type)
-
-    try:
-        answer = {'records': resolver.look()}
-        response = responder.success
-
-    except TargetNotFound:
-        answer = None
-        response = responder.target_not_found
-
-    except UnknownRecordType:
-        answer = None
-        response = responder.unknown_record_type
-
-    except EmptyAnswer:
-        answer = None
-        response = responder.empty_answer
-
-    message = {
-            'code': response['code'],
-            'data': {
-                'answer': answer,
-                'question': {
-                        'target': domain,
-                        'record': record_type
-                    }
-                },
-            'message': response['message'],
-            'status': response['status']
-
+    record = str.upper(record)
+    question = {
+            'domain': domain,
+            'record': record
             }
 
-    return jsonify(message)
+    resolver = Resolver(question)
+    responder = Responder(question)
+
+    try:
+        answer = resolver.look()
+
+        responder = Responder(question, answer)
+        api_response = responder.success
+
+    except TargetNotFound:
+        api_response = responder.target_not_found
+
+    except UnknownRecordType:
+        api_response = responder.unknown_record
+
+    except EmptyAnswer:
+        api_response = responder.empty_answer
+
+    response_message = api_response['message']
+    response_code = api_response['code']
+
+    return jsonify(response_message), response_code
 
 
-@application.errorhandler(404)
-def not_found():
+@dora.errorhandler(404)
+def not_found(e):
     """."""
-    pass
+    responder = Responder()
+    app_response = responder.resource_not_found
+
+    response_message = app_response['message']
+    response_code = app_response['code']
+
+    return jsonify(response_message), response_code
 
 
-@application.errorhandler(500)
-def internal_error():
+@dora.errorhandler(500)
+def internal_error(e):
     """."""
     pass
 
