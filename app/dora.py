@@ -28,7 +28,7 @@ SOFTWARE.
 
 
 __program__ = 'dora'
-__version__ = 'alpha-0.1'
+__version__ = '0.1.0-beta+006'
 __author__  = 'Caian R. Ertl'
 
 
@@ -98,7 +98,7 @@ class CLI:
         self._parser.add_argument(
                 '-v', '--version',
                 action = 'version',
-                version = __version__,
+                version = __program__ + ' ' + __version__ + ' (' + __author__ + ')',
                 help = 'show the application version and exit')
 
         self._parser.add_argument(
@@ -136,7 +136,7 @@ class CLI:
     def act(self):
         """."""
         argp = self._parser.parse_args()
-        #print(vars(argp))
+
         if argp.copyright:
             self.show_copyright()
 
@@ -151,9 +151,11 @@ class CLI:
                         'Try \'dora --help\' for more information.')
 
     def show_copyright(self):
+        """."""
         print(__copyright__)
 
     def _start(self, f_port, debug_mode):
+        """."""
         dora.run(debug = debug_mode,
                 host = '0.0.0.0',
                 use_reloader = True,
