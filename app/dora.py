@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-
 # -*- coding: utf-8 -*-
+
 
 __copyright__ = """
 ** MIT License **
@@ -26,6 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+
 __program__ = 'dora'
 __version__ = 'alpha-0.1'
 __author__  = 'Caian R. Ertl'
@@ -43,7 +44,11 @@ try:
     from flask import render_template
     from flask import jsonify
     import dns.resolver
-except ImportError as ierr:
+
+except ImportError as e:
+    print('DORA: impossible to import 3rd-party libraries.\n'
+            'Latest traceback: {0}'.format(e.args[0]))
+
     sys.exit(1)
 
 
@@ -110,7 +115,7 @@ class CLI:
                 dest = 'port',
                 type = int,
                 help = textwrap.dedent('''\
-                        the port number the application will listen to
+                        sets the port number the application will listen to
                         default value: 80
                         '''))
 
@@ -125,16 +130,16 @@ class CLI:
         #print(vars(argp))
         if argp.copyright:
             self.show_copyright()
+
         else:
             if argp.subcmd == 'start':
                 if argp.port is None:
-                    argp.port = 8080
+                    argp.port = 80
                 self._start(argp.port, argp.debug)
 
             else:
                 print('DORA: missing operand.\n'
                       'Try \'dora --help\' for more information.')
-                # self._parser.print_help()
 
     def show_copyright(self):
         print(__copyright__)
@@ -384,10 +389,14 @@ def internal_error():
     pass
 
 
-if __name__ == '__main__':
-    # Needed for local execution.
+def main():
     _cli = CLI()
     _cli.act()
 
     sys.exit(0)
+
+
+# Needed for local execution.
+if __name__ == '__main__':
+    main()
 
