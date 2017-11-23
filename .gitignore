@@ -6,15 +6,6 @@
 __pycache__
 .cache
 
-# python virtual environment
-# (virtualenv)
-app/bin
-app/include
-app/lib
-
-# pip log
-app/pip-selfcheck.json
-
 # auxiliary scripts
 app/deploy.sh
 
