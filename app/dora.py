@@ -29,7 +29,7 @@ SOFTWARE.
 
 __program__ = 'dora'
 __version__ = '0.1.0-beta+006'
-__author__  = 'Caian R. Ertl'
+__author__ = 'Caian R. Ertl'
 
 
 # Standard libraries. Should not fail.
@@ -47,23 +47,19 @@ try:
 
 except ImportError as e:
     print('DORA: impossible to import 3rd-party libraries.\n'
-            'Latest traceback: {0}' . format(e.args[0]) )
+          'Latest traceback: {0}' . format(e.args[0]))
 
     sys.exit(1)
-
 
 API_SCOPE = 'api'
 APP_SCOPE = 'app'
 
 
-#----------------------------------------------------
 #   ____   _       ___
 #  / ___| | |     |_ _|
 # | |     | |      | |
 # | |___ _| |___ _ | | _
 #  \____(_)_____(_)___(_)
-#
-#----------------------------------------------------
 class CLI:
     """Command-line interface handling class.
 
@@ -80,15 +76,15 @@ class CLI:
         """."""
         # Top-level parser
         self._parser = ArgumentParser(
-                prog = __program__,
-                formatter_class = RawTextHelpFormatter,
-                description = textwrap.dedent('''\
+                prog=__program__,
+                formatter_class=RawTextHelpFormatter,
+                description=textwrap.dedent('''\
                         DORA\'s command-line interface.
 
                         DORA is a web application that provides a simple
                         API for DNS querying through a REST archictecture.
                         '''),
-                epilog = textwrap.dedent('''\
+                epilog=textwrap.dedent('''\
                         This is a Free and Open-Source Software (FOSS).
                         Licensed under the MIT License.
 
@@ -97,41 +93,42 @@ class CLI:
 
         self._parser.add_argument(
                 '-v', '--version',
-                action = 'version',
-                version = __program__ + ' ' + __version__ + ' (' + __author__ + ')',
-                help = 'show the application version and exit')
+                action='version',
+                version=__program__ + ' ' + __version__ + ' (' +
+                __author__ + ')',
+                help='show the application version and exit')
 
         self._parser.add_argument(
                 '--copyright',
-                action = 'store_true',
-                dest = 'copyright',
-                help = 'show the copyright information and exit')
+                action='store_true',
+                dest='copyright',
+                help='show the copyright information and exit')
 
         # Initializes the subparser
         self._sub_parser = self._parser.add_subparsers(
-                dest = 'subcmd',
-                help = 'DORA commands')
+                dest='subcmd',
+                help='DORA commands')
 
         # Start subcommand
         subcmd_start = self._sub_parser.add_parser(
                 'start',
-                help = 'starts DORA\'s service')
+                help='starts DORA\'s service')
 
         # Start subcommand's arguments
         subcmd_start.add_argument(
                 '-p', '--port',
-                action = 'store',
-                dest = 'port',
-                type = int,
-                help = textwrap.dedent('''\
+                action='store',
+                dest='port',
+                type=int,
+                help=textwrap.dedent('''\
                         sets the port number the application will listen to
                         default value: 80
                         '''))
 
         subcmd_start.add_argument(
                 '-d', '--debug',
-                action = 'store_true',
-                help = 'enable debug mode')
+                action='store_true',
+                help='enable debug mode')
 
     def act(self):
         """."""
@@ -148,7 +145,7 @@ class CLI:
 
             else:
                 print('DORA: missing operand.\n'
-                        'Try \'dora --help\' for more information.')
+                      'Try \'dora --help\' for more information.')
 
     def show_copyright(self):
         """."""
@@ -156,20 +153,18 @@ class CLI:
 
     def _start(self, f_port, debug_mode):
         """."""
-        dora.run(debug = debug_mode,
-                host = '0.0.0.0',
-                use_reloader = True,
-                port = f_port)
+        dora.run(debug=debug_mode,
+                 host='0.0.0.0',
+                 use_reloader=True,
+                 port=f_port)
 
 
-#----------------------------------------------------
 #  ____                                 _
 # |  _ \ ___  ___ _ __   ___  _ __   __| | ___ _ __
 # | |_) / _ \/ __| '_ \ / _ \| '_ \ / _` |/ _ \ '__|
 # |  _ <  __/\__ \ |_) | (_) | | | | (_| |  __/ |
 # |_| \_\___||___/ .__/ \___/|_| |_|\__,_|\___|_|
 #                |_|
-#----------------------------------------------------
 class Responder:
     """."""
 
@@ -177,7 +172,7 @@ class Responder:
     _message = None
     _status = None
 
-    def __init__(self, question = None, answer = None):
+    def __init__(self, question=None, answer=None):
         """."""
         self._answer = answer
         self._question = question
@@ -247,7 +242,8 @@ class Responder:
     def empty_answer(self):
         """."""
         self._code = 204
-        self._message = 'The response does not contain an answer to the question.'
+        self._message = 'The response does not contain an'
+        + 'answer to the question.'
         self._status = 'success'
 
         return self.make_response(API_SCOPE)
@@ -262,14 +258,12 @@ class Responder:
         return self.make_response(API_SCOPE)
 
 
-#----------------------------------------------------
 #  _____                    _   _
 # | ____|_  _____ ___ _ __ | |_(_) ___  _ __  ___
 # |  _| \ \/ / __/ _ \ '_ \| __| |/ _ \| '_ \/ __|
 # | |___ >  < (_|  __/ |_) | |_| | (_) | | | \__ \
 # |_____/_/\_\___\___| .__/ \__|_|\___/|_| |_|___/
 #                    |_|
-#----------------------------------------------------
 class ResolverException(Exception):
     """Base exception class for Resolver exceptions"""
 
@@ -286,14 +280,11 @@ class EmptyAnswer(ResolverException):
     """."""
 
 
-#----------------------------------------------------
 #  ____                 _
 # |  _ \ ___  ___  ___ | |_   _____ _ __
 # | |_) / _ \/ __|/ _ \| \ \ / / _ \ '__|
 # |  _ <  __/\__ \ (_) | |\ V /  __/ |
 # |_| \_\___||___/\___/|_| \_/ \___|_|
-#
-#----------------------------------------------------
 class Resolver:
     """."""
 
@@ -382,15 +373,11 @@ class Resolver:
         return self._answer
 
 
-#----------------------------------------------------
 #      _                                   _
 #   __| | ___  _ __ __ _   _ __ ___   __ _(_)_ __
 #  / _` |/ _ \| '__/ _` | | '_ ` _ \ / _` | | '_ \
 # | (_| | (_) | | | (_| |_| | | | | | (_| | | | | |
 #  \__,_|\___/|_|  \__,_(_)_| |_| |_|\__,_|_|_| |_|
-#
-#----------------------------------------------------
-
 dora = Flask(__name__)
 
 
@@ -400,7 +387,7 @@ def display_splash():
     return render_template('splash.html')
 
 
-@dora.route('/dora/<string:record>/<string:domain>', methods = ['GET'])
+@dora.route('/dora/<string:record>/<string:domain>', methods=['GET'])
 def perform_lookup(record, domain):
     """."""
     record = str.upper(record)
@@ -461,4 +448,3 @@ def main():
 # Needed for local execution.
 if __name__ == '__main__':
     main()
-
