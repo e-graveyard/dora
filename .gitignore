@@ -16,7 +16,6 @@ app/lib
 app/pip-selfcheck.json
 
 # auxiliary scripts
-app/run.sh
 app/deploy.sh
 
 # deployment environment
