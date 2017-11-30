@@ -8,4 +8,6 @@ python:
 
 install: "make"
 
-script: make ci
+script:
+        - make init
+        - make ci
