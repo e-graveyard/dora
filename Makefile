@@ -5,3 +5,7 @@ init:
 
 ci:
 	pipenv run pytest
+
+docs:
+	cd docs && make html
+	@echo "Build finished. The HTML pages are in build/html"
