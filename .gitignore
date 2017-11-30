@@ -6,13 +6,9 @@
 __pycache__
 .cache
 
-# auxiliary scripts
-app/deploy.sh
-
 # deployment environment
 app/deploy
 
 # sphinx documentation
 docs/build
-docs/source
 docs/_themes
