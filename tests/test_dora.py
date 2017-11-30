@@ -1,9 +1,17 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# pylint: disable=E402
+
+
 import sys
 from os import path
 
-sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
 
-import dora as application
+sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
+
+
+import app.dora as application
 import pytest
 
 
