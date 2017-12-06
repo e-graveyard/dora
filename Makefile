@@ -1,3 +1,5 @@
+.PHONY: docs
+
 init:
 	pip3 install pipenv --upgrade
 	pipenv install
@@ -7,5 +9,4 @@ ci:
 	pipenv run pytest
 
 docs:
-	cd docs && make html
-	@echo "Build finished. The HTML pages are in build/html"
+	cd ./docs && make html
