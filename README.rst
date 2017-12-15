@@ -27,9 +27,9 @@ Engine.
 Requirements
 ------------
 
- - Python3 (3.4 and above)
- - `Flask microframework`_
- - `dnspython toolkit`_
+- Python3 (3.4 and above)
+- `Flask microframework`_
+- `dnspython toolkit`_
 
 .. _Flask microframework: https://github.com/pallets/flask
 .. _dnspython toolkit: https://github.com/rthalley/dnspython
@@ -47,6 +47,6 @@ of the code, `read the docs`_.
 Similar Projects
 ----------------
 
- - `dns-api.org`_ :a DNS-lookup service written in Perl.
+- `dns-api.org`_ :a DNS-lookup service written in Perl.
 
 .. _dns-api.org: https://github.com/skx/dns-api.org
