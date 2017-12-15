@@ -147,6 +147,8 @@ class CLI:
                 print('DORA: missing operand.\n'
                       'Try \'dora --help\' for more information.')
 
+                sys.exit(1)
+
     def show_copyright(self):
         """."""
         print(__copyright__)
