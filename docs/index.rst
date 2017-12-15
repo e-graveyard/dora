@@ -27,14 +27,22 @@ Engine.
 Links & References
 ------------------
 
- - `DORA on GitHub`_
- - `Flask microframework`_
- - `dnspython toolkit`_
+- `DORA on GitHub`_
+- `Flask microframework`_
+- `dnspython toolkit`_
 
 .. _DORA on GitHub: https://github.com/caianrais/dora
 .. _Flask microframework: https://github.com/pallets/flask
 .. _dnspython toolkit: https://github.com/rthalley/dnspython
 
+
+Documentation Contents
+----------------------
+
+.. toctree::
+        :maxdepth: 2
+
+        usage
 
 Indices and tables
 ------------------
