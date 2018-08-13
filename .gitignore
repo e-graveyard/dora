@@ -6,8 +6,8 @@
 __pycache__
 .cache
 
-# deployment environment
-app/deploy
+# mypy
+.mypy_cache
 
 # sphinx documentation
 docs/build
