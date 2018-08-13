@@ -41,8 +41,12 @@ import textwrap
 # Required 3rd-parth libraries.
 try:
     from flask import Flask
+    from flask import make_response
     from flask import render_template
-    from flask import jsonify
+
+    from flask_restful import Api
+    from flask_restful import Resource
+
     import dns.resolver
 
 except ImportError as e:
@@ -380,73 +384,53 @@ class Resolver:
 #  / _` |/ _ \| '__/ _` | | '_ ` _ \ / _` | | '_ \
 # | (_| | (_) | | | (_| |_| | | | | | (_| | | | | |
 #  \__,_|\___/|_|  \__,_(_)_| |_| |_|\__,_|_|_| |_|
+class DoraSplashPageHandler(Resource):
+    def get(self):
+        return make_response(render_template('splash.html'))
+
+
+class DoraQueryRouteHandler(Resource):
+    def get(self, domain, record):
+        record = str.upper(record)
+        question = {
+                'domain': domain,
+                'record': record
+                }
+
+        resolver = Resolver(question)
+        responder = Responder(question)
+
+        try:
+            answer = resolver.look()
+
+            responder = Responder(question, answer)
+            api_response = responder.success
+
+        except TargetNotFound:
+            api_response = responder.target_not_found
+
+        except UnknownRecordType:
+            api_response = responder.unknown_record
+
+        except EmptyAnswer:
+            api_response = responder.empty_answer
+
+        response_message = api_response['message']
+        response_code = api_response['code']
+
+        return response_message, response_code
+
+
 dora = Flask(__name__)
 
-
-@dora.route('/')
-def display_splash():
-    """."""
-    return render_template('splash.html')
-
-
-@dora.route('/dora/<string:record>/<string:domain>', methods=['GET'])
-def perform_lookup(record, domain):
-    """."""
-    record = str.upper(record)
-    question = {
-            'domain': domain,
-            'record': record
-            }
-
-    resolver = Resolver(question)
-    responder = Responder(question)
-
-    try:
-        answer = resolver.look()
-
-        responder = Responder(question, answer)
-        api_response = responder.success
-
-    except TargetNotFound:
-        api_response = responder.target_not_found
-
-    except UnknownRecordType:
-        api_response = responder.unknown_record
-
-    except EmptyAnswer:
-        api_response = responder.empty_answer
-
-    response_message = api_response['message']
-    response_code = api_response['code']
-
-    return jsonify(response_message), response_code
-
-
-@dora.errorhandler(404)
-def not_found(e):
-    """."""
-    responder = Responder()
-    app_response = responder.resource_not_found
-
-    response_message = app_response['message']
-    response_code = app_response['code']
-
-    return jsonify(response_message), response_code
-
-
-@dora.errorhandler(500)
-def internal_error(e):
-    """."""
-    pass
-
-
-def main():
-    _cli = CLI()
-    _cli.act()
-
-    sys.exit(0)
+api = Api(dora)
+api.add_resource(DoraSplashPageHandler, '/')
+api.add_resource(DoraQueryRouteHandler, '/<string:domain_name>/<string:record_type>')
 
 
 # Needed for local execution.
 if __name__ == '__main__':
-    main()
+    _cli = CLI()
+    _cli.act()
+
+    sys.exit(0)
