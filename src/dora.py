@@ -55,9 +55,6 @@ except ImportError as e:
 
     sys.exit(1)
 
-API_SCOPE = 'api'
-APP_SCOPE = 'app'
-
 
 #   ____   _       ___
 #  / ___| | |     |_ _|
@@ -166,103 +163,67 @@ class CLI:
                  port=f_port)
 
 
-#  ____                                 _
-# |  _ \ ___  ___ _ __   ___  _ __   __| | ___ _ __
-# | |_) / _ \/ __| '_ \ / _ \| '_ \ / _` |/ _ \ '__|
-# |  _ <  __/\__ \ |_) | (_) | | | | (_| |  __/ |
-# |_| \_\___||___/ .__/ \___/|_| |_|\__,_|\___|_|
-#                |_|
-class Responder:
-    """."""
+class Response:
+    def __init__(self, question=None, records=None):
+        self.answer = self.Answer(question, records)
+        self.error = self.Error()
 
-    _code = None
-    _message = None
-    _status = None
-
-    def __init__(self, question=None, answer=None):
-        """."""
-        self._answer = answer
-        self._question = question
-
-    def make_response(self, scope):
-        """."""
-
-        if scope == API_SCOPE:
-            if self._answer is not None:
-                self._answer = {'records': self._answer}
-
-            message = {
-                    'code': self._code,
-                    'data': {
-                        'answer': self._answer,
-                        'question': {
-                            'target': self._question['domain'],
-                            'record': self._question['record']
-                            }
-                        },
-                    'message': self._message,
-                    'status': self._status
-                    }
-
-        elif scope == APP_SCOPE:
-            message = {
-                    'code': self._code,
-                    'message': self._message,
-                    'status': self._status
-                    }
-
+    @staticmethod
+    def respond(message, code, data=None):
         response = {
-                'code': self._code,
-                'message': message
-                }
+            'code': code,
+            'message': message,
+            'status': 'success' if code < 400 else 'error'
+        }
+
+        if data:
+            response['data'] = data
 
         return response
 
-    @property
-    def resource_not_found(self):
-        """."""
-        self._code = 404
-        self._message = 'The specified API resource does not exists.'
-        self._status = 'error'
+    class Answer:
+        def __init__(self, question, records):
+            self.question = question
+            self.records = '' if not records else records
 
-        return self.make_response(APP_SCOPE)
+        def respond(self, message, code):
+            data = {}
+            data['question'] = self.question
+            if self.records:
+                data['answer'] = {'records': self.records}
 
-    @property
-    def target_not_found(self):
-        """."""
-        self._code = 404
-        self._message = 'The specified domain target was not found.'
-        self._status = 'error'
+            return Response.respond(message, code, data)
 
-        return self.make_response(API_SCOPE)
+        @property
+        def empty_answer(self):
+            return self.respond(
+                'The response does not contain an answer to the question.', 204
+            )
 
-    @property
-    def unknown_record(self):
-        """."""
-        self._code = 400
-        self._message = 'Bad Request: Unknown record type.'
-        self._status = 'error'
+        @property
+        def success(self):
+            return self.respond(
+                'DNS lookup is successful.', 200
+            )
 
-        return self.make_response(API_SCOPE)
+    class Error:
+        @property
+        def resource_not_found(self):
+            return Response.respond(
+                'The specified DNS resource does not exists.', 404
+            )
 
-    @property
-    def empty_answer(self):
-        """."""
-        self._code = 204
-        self._message = 'The response does not contain an'
-        + 'answer to the question.'
-        self._status = 'success'
+        @property
+        def target_not_found(self):
+            return Response.respond(
+                'The specified domain target was not found.', 404
+            )
 
-        return self.make_response(API_SCOPE)
-
-    @property
-    def success(self):
-        """."""
-        self._code = 200
-        self._message = 'DNS lookup is successful.'
-        self._status = 'success'
-
-        return self.make_response(API_SCOPE)
+        @property
+        def unknown_record_type(self):
+            return Response.respond(
+                'Bad Request: Unknown record type.', 400
+            )
 
 
 #  _____                    _   _
