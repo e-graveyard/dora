@@ -426,7 +426,7 @@ dora = Flask(__name__)
 
 api = Api(dora)
 api.add_resource(DoraSplashPageHandler, '/')
-api.add_resource(DoraQueryRouteHandler, '/<string:domain_name>/<string:record_type>')
+api.add_resource(DoraQueryRouteHandler, '/<string:domain>/<string:record>')
 
 
 # Needed for local execution.
