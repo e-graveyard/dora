@@ -28,7 +28,7 @@ SOFTWARE.
 
 
 __program__ = 'dora'
-__version__ = '0.1.0-beta+006'
+__version__ = '0.1.0'
 __author__ = 'Caian R. Ertl'
 
 
@@ -98,8 +98,9 @@ class CLI:
         self._parser.add_argument(
                 '-v', '--version',
                 action='version',
-                version=__program__ + ' ' + __version__ + ' (' +
-                __author__ + ')',
+                version='{0} ({1})'.format(
+                    __program__, __version__
+                ),
                 help='show the application version and exit')
 
         self._parser.add_argument(
