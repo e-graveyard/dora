@@ -70,13 +70,10 @@ class CLI:
     subcommand is a possible action (e.g. `dora start`).
     """
 
-    _parser = None
-    _sub_parser = None
-
     def __init__(self):
         """."""
         # Top-level parser
-        self._parser = ArgumentParser(
+        self.parser = ArgumentParser(
                 prog=__program__,
                 formatter_class=RawTextHelpFormatter,
                 description=textwrap.dedent('''\
@@ -92,7 +89,7 @@ class CLI:
                         Project page: <https://github.com/caianrais/dora>
                         '''))
 
-        self._parser.add_argument(
+        self.parser.add_argument(
                 '-v', '--version',
                 action='version',
                 version='{0} ({1})'.format(
@@ -100,19 +97,19 @@ class CLI:
                 ),
                 help='show the application version and exit')
 
-        self._parser.add_argument(
+        self.parser.add_argument(
                 '--copyright',
                 action='store_true',
                 dest='copyright',
                 help='show the copyright information and exit')
 
         # Initializes the subparser
-        self._sub_parser = self._parser.add_subparsers(
+        self.sub_parser = self.parser.add_subparsers(
                 dest='subcmd',
                 help='DORA commands')
 
         # Start subcommand
-        subcmd_start = self._sub_parser.add_parser(
+        subcmd_start = self.sub_parser.add_parser(
                 'start',
                 help='starts DORA\'s service')
 
@@ -134,7 +131,7 @@ class CLI:
 
     def act(self):
         """."""
-        argp = self._parser.parse_args()
+        argp = self.parser.parse_args()
 
         if argp.copyright:
             self.show_copyright()
@@ -230,33 +227,29 @@ class Response:
 # |  _ <  __/\__ \ (_) | |\ V /  __/ |
 # |_| \_\___||___/\___/|_| \_/ \___|_|
 class Resolver:
-    _domain = None
-    _record = None
-    _resolver = None
-
     def __init__(self, domain, record):
-        self._domain = domain
-        self._record = record
-        self._resolver = dns.resolver
+        self.domain = domain
+        self.record = record
+        self.resolver = dns.resolver
 
     def look(self):
         response = Response(question={
-            'domain': self._domain,
-            'record': self._record
+            'domain': self.domain,
+            'record': self.record
         })
 
         try:
             dig = None
-            if self._record == 'A':
+            if self.record == 'A':
                 dig = self.dig_a
 
-            elif self._record == 'MX':
+            elif self.record == 'MX':
                 dig = self.dig_mx
 
-            elif self._record == 'NS':
+            elif self.record == 'NS':
                 dig = self.dig_ns
 
-            elif self._record == 'TXT':
+            elif self.record == 'TXT':
                 dig = self.dig_txt
 
             else:
@@ -274,7 +267,7 @@ class Resolver:
         pass
 
     def dig_mx(self):
-        mx_query = self._resolver.query(self._domain, self._record)
+        mx_query = self.resolver.query(self.domain, self.record)
 
         records = []
         for mx_data in mx_query:
@@ -286,7 +279,7 @@ class Resolver:
         return records
 
     def dig_ns(self):
-        ns_query = self._resolver.query(self._domain, self._record)
+        ns_query = self.resolver.query(self.domain, self.record)
 
         records = []
         for ns_data in ns_query.response.answer:
@@ -298,7 +291,7 @@ class Resolver:
         return records
 
     def dig_txt(self):
-        txt_query = self._resolver.query(self._domain, self._record)
+        txt_query = self.resolver.query(self.domain, self.record)
 
         records = []
         for txt_data in txt_query.response.answer:
