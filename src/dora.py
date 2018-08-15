@@ -164,8 +164,8 @@ class CLI:
 
 
 class Response:
-    def __init__(self, question=None, records=None):
-        self.answer = self.Answer(question, records)
+    def __init__(self, question):
+        self.answer = self.Answer(question)
         self.error = self.Error()
 
     @staticmethod
@@ -182,28 +182,26 @@ class Response:
         return response
 
     class Answer:
-        def __init__(self, question, records):
+        def __init__(self, question):
             self.question = question
-            self.records = '' if not records else records
 
-        def respond(self, message, code):
+        def respond(self, message, code, records=None):
             data = {}
             data['question'] = self.question
-            if self.records:
-                data['answer'] = {'records': self.records}
+            if records:
+                data['answer'] = {'records': records}
 
             return Response.respond(message, code, data)
+
+        def success(self, records):
+            return self.respond(
+                'DNS lookup is successful.', 200, records
+            )
 
         @property
         def empty_answer(self):
             return self.respond(
                 'The response does not contain an answer to the question.', 204
-            )
-
-        @property
-        def success(self):
-            return self.respond(
-                'DNS lookup is successful.', 200
             )
 
     class Error:
@@ -226,119 +224,90 @@ class Response:
             )
 
 
-#  _____                    _   _
-# | ____|_  _____ ___ _ __ | |_(_) ___  _ __  ___
-# |  _| \ \/ / __/ _ \ '_ \| __| |/ _ \| '_ \/ __|
-# | |___ >  < (_|  __/ |_) | |_| | (_) | | | \__ \
-# |_____/_/\_\___\___| .__/ \__|_|\___/|_| |_|___/
-#                    |_|
-class ResolverException(Exception):
-    """Base exception class for Resolver exceptions"""
-
-
-class TargetNotFound(ResolverException):
-    """."""
-
-
-class UnknownRecordType(ResolverException):
-    """."""
-
-
-class EmptyAnswer(ResolverException):
-    """."""
-
-
 #  ____                 _
 # |  _ \ ___  ___  ___ | |_   _____ _ __
 # | |_) / _ \/ __|/ _ \| \ \ / / _ \ '__|
 # |  _ <  __/\__ \ (_) | |\ V /  __/ |
 # |_| \_\___||___/\___/|_| \_/ \___|_|
 class Resolver:
-    """."""
-
     _domain = None
     _record = None
-    _answer = None
     _resolver = None
 
-    def __init__(self, question):
-        """."""
-        self._domain = question['domain']
-        self._record = question['record']
-        self._answer = []
+    def __init__(self, domain, record):
+        self._domain = domain
+        self._record = record
         self._resolver = dns.resolver
 
     def look(self):
-        """."""
+        response = Response(question={
+            'domain': self._domain,
+            'record': self._record
+        })
+
         try:
+            dig = None
             if self._record == 'A':
-                return self._dig_a()
+                dig = self.dig_a
 
             elif self._record == 'MX':
-                return self._dig_mx()
+                dig = self.dig_mx
 
             elif self._record == 'NS':
-                return self._dig_ns()
+                dig = self.dig_ns
 
             elif self._record == 'TXT':
-                return self._dig_txt()
+                dig = self.dig_txt
 
             else:
-                raise dns.rdatatype.UnknownRdatatype
+                return response.error.unknown_record_type
 
-        except dns.resolver.NXDOMAIN:
-            raise TargetNotFound
+            return response.answer.success(dig())
 
         except dns.resolver.NoAnswer:
-            raise EmptyAnswer
+            return response.answer.empty_answer
 
-        except dns.rdatatype.UnknownRdatatype:
-            raise UnknownRecordType
+        except dns.resolver.NXDOMAIN:
+            return response.error.target_not_found
 
-    def _dig_a(self):
-        """."""
+    def dig_a(self):
         pass
 
-    def _dig_mx(self):
-        """."""
+    def dig_mx(self):
         mx_query = self._resolver.query(self._domain, self._record)
 
+        records = []
         for mx_data in mx_query:
-            mx_item_hostname = str(mx_data.exchange)
-            mx_item_priority = mx_data.preference
-
-            self._answer.append({
-                'hostname': mx_item_hostname,
-                'priority': mx_item_priority
+            records.append({
+                'hostname': str(mx_data.exchange),
+                'priority': mx_data.preference
                 })
 
-        return self._answer
+        return records
 
-    def _dig_ns(self):
-        """."""
+    def dig_ns(self):
         ns_query = self._resolver.query(self._domain, self._record)
-        ns_answer = ns_query.response.answer
 
-        for ns_data in ns_answer:
+        records = []
+        for ns_data in ns_query.response.answer:
             for ns_item in ns_data.items:
-                self._answer.append({
+                records.append({
                     'nameserver': ns_item.to_text()
                     })
 
-        return self._answer
+        return records
 
-    def _dig_txt(self):
-        """."""
+    def dig_txt(self):
         txt_query = self._resolver.query(self._domain, self._record)
-        txt_answer = txt_query.response.answer
 
-        for txt_data in txt_answer:
+        records = []
+        for txt_data in txt_query.response.answer:
             for txt_item in txt_data.items:
-                self._answer.append({
+                records.append({
                     'text': txt_item.to_text()
                     })
 
-        return self._answer
+        return records
 
 
 #      _                                   _
@@ -353,34 +322,8 @@ class DoraSplashPageHandler(Resource):
 
 class DoraQueryRouteHandler(Resource):
     def get(self, domain, record):
-        record = str.upper(record)
-        question = {
-                'domain': domain,
-                'record': record
-                }
-
-        resolver = Resolver(question)
-        responder = Responder(question)
-
-        try:
-            answer = resolver.look()
-
-            responder = Responder(question, answer)
-            api_response = responder.success
-
-        except TargetNotFound:
-            api_response = responder.target_not_found
-
-        except UnknownRecordType:
-            api_response = responder.unknown_record
-
-        except EmptyAnswer:
-            api_response = responder.empty_answer
-
-        response_message = api_response['message']
-        response_code = api_response['code']
-
-        return response_message, response_code
+        resolver = Resolver(domain, str.upper(record))
+        return resolver.look()
 
 
 dora = Flask(__name__)
