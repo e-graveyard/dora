@@ -33,21 +33,19 @@ __author__ = 'Caian R. Ertl'
 
 
 # Standard libraries. Should not fail.
-from argparse import ArgumentParser
-from argparse import RawTextHelpFormatter
 import sys
 import textwrap
+from argparse import ArgumentParser
+from argparse import RawTextHelpFormatter
 
 # Required 3rd-parth libraries.
 try:
+    import dns.resolver
     from flask import Flask
     from flask import make_response
     from flask import render_template
-
     from flask_restful import Api
     from flask_restful import Resource
-
-    import dns.resolver
 
 except ImportError as e:
     print('DORA: impossible to import 3rd-party libraries.\n'
@@ -56,11 +54,6 @@ except ImportError as e:
     sys.exit(1)
 
 
-#   ____   _       ___
-#  / ___| | |     |_ _|
-# | |     | |      | |
-# | |___ _| |___ _ | | _
-#  \____(_)_____(_)___(_)
 class CLI:
     """Command-line interface handling class.
 
@@ -130,7 +123,6 @@ class CLI:
                 help='enable debug mode')
 
     def act(self):
-        """."""
         argp = self.parser.parse_args()
 
         if argp.copyright:
@@ -149,11 +141,9 @@ class CLI:
                 sys.exit(1)
 
     def show_copyright(self):
-        """."""
         print(__copyright__)
 
     def _start(self, f_port, debug_mode):
-        """."""
         dora.run(debug=debug_mode,
                  host='0.0.0.0',
                  use_reloader=True,
@@ -221,11 +211,6 @@ class Response:
             )
 
 
-#  ____                 _
-# |  _ \ ___  ___  ___ | |_   _____ _ __
-# | |_) / _ \/ __|/ _ \| \ \ / / _ \ '__|
-# |  _ <  __/\__ \ (_) | |\ V /  __/ |
-# |_| \_\___||___/\___/|_| \_/ \___|_|
 class Resolver:
     def __init__(self, domain, record):
         self.domain = domain
@@ -303,11 +288,6 @@ class Resolver:
         return records
 
 
-#      _                                   _
-#   __| | ___  _ __ __ _   _ __ ___   __ _(_)_ __
-#  / _` |/ _ \| '__/ _` | | '_ ` _ \ / _` | | '_ \
-# | (_| | (_) | | | (_| |_| | | | | | (_| | | | | |
-#  \__,_|\___/|_|  \__,_(_)_| |_| |_|\__,_|_|_| |_|
 class DoraSplashPageHandler(Resource):
     def get(self):
         return make_response(render_template('splash.html'))
@@ -330,5 +310,3 @@ api.add_resource(DoraQueryRouteHandler, '/<string:domain>/<string:record>')
 if __name__ == '__main__':
     _cli = CLI()
     _cli.act()
-
-    sys.exit(0)
