@@ -212,35 +212,35 @@ class Response:
 
 
 class Resolver:
-    def __init__(self, domain, record):
+    def __init__(self, domain, resource):
         self.domain = domain
-        self.record = record
+        self.resource = resource
         self.resolver = dns.resolver
 
     def look(self):
         response = Response(question={
             'domain': self.domain,
-            'record': self.record
+            'record': self.resource
         })
 
         try:
-            dig = None
-            if self.record == 'A':
-                dig = self.dig_a
+            records = None
+            if self.resource == 'A':
+                records = self.a
 
-            elif self.record == 'MX':
-                dig = self.dig_mx
+            elif self.resource == 'MX':
+                records = self.mx
 
-            elif self.record == 'NS':
-                dig = self.dig_ns
+            elif self.resource == 'NS':
+                records = self.ns
 
-            elif self.record == 'TXT':
-                dig = self.dig_txt
+            elif self.resource == 'TXT':
+                records = self.txt
 
             else:
                 return response.error.unknown_record_type
 
-            return response.answer.success(dig())
+            return response.answer.success(records)
 
         except dns.resolver.NoAnswer:
             return response.answer.empty_answer
@@ -248,42 +248,44 @@ class Resolver:
         except dns.resolver.NXDOMAIN:
             return response.error.target_not_found
 
-    def dig_a(self):
-        pass
-
-    def dig_mx(self):
-        mx_query = self.resolver.query(self.domain, self.record)
-
+    def query(self, resource_identifier=None):
         records = []
-        for mx_data in mx_query:
-            records.append({
-                'hostname': str(mx_data.exchange),
-                'priority': mx_data.preference
+
+        query = self.resolver.query(self.domain, self.resource)
+        if resource_identifier:
+            for answer in query:
+                records.append({
+                    resource_identifier: answer.to_text()
                 })
 
-        return records
-
-    def dig_ns(self):
-        ns_query = self.resolver.query(self.domain, self.record)
-
-        records = []
-        for ns_data in ns_query.response.answer:
-            for ns_item in ns_data.items:
-                records.append({
-                    'nameserver': ns_item.to_text()
-                    })
+        else:
+            for answer in query:
+                records.append(answer.to_text())
 
         return records
 
-    def dig_txt(self):
-        txt_query = self.resolver.query(self.domain, self.record)
+    @property
+    def a(self):
+        return self.query('ip')
 
+    @property
+    def ns(self):
+        return self.query('nameserver')
+
+    @property
+    def txt(self):
+        return self.query('text')
+
+    @property
+    def mx(self):
         records = []
-        for txt_data in txt_query.response.answer:
-            for txt_item in txt_data.items:
-                records.append({
-                    'text': txt_item.to_text()
-                    })
+
+        for answer in self.query():
+            priority, hostname = answer.split(' ')
+            records.append({
+                'hostname': hostname,
+                'priority': priority
+            })
 
         return records
 
