@@ -227,6 +227,9 @@ class Resolver:
             if self.resource == 'A':
                 records = self.a
 
+            elif self.resource == 'AAAA':
+                records = self.aaaa
+
             elif self.resource == 'MX':
                 records = self.mx
 
@@ -266,6 +269,10 @@ class Resolver:
     @property
     def a(self):
         return self.query('ipv4')
+
+    @property
+    def aaaa(self):
+        return self.query('ipv6')
 
     @property
     def ns(self):
