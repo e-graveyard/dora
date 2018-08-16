@@ -230,6 +230,9 @@ class Resolver:
             elif self.resource == 'AAAA':
                 records = self.aaaa
 
+            elif self.resource == 'CNAME':
+                records = self.cname
+
             elif self.resource == 'MX':
                 records = self.mx
 
@@ -273,6 +276,10 @@ class Resolver:
     @property
     def aaaa(self):
         return self.query('ipv6')
+
+    @property
+    def cname(self):
+        return self.query('canonical')
 
     @property
     def ns(self):
