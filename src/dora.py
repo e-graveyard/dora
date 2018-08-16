@@ -166,7 +166,7 @@ class Response:
         if data:
             response['data'] = data
 
-        return response
+        return response, code
 
     class Answer:
         def __init__(self, question):
