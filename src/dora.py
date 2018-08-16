@@ -215,7 +215,6 @@ class Resolver:
     def __init__(self, domain, resource):
         self.domain = domain
         self.resource = resource
-        self.resolver = dns.resolver
 
     def look(self):
         response = Response(question={
@@ -251,7 +250,7 @@ class Resolver:
     def query(self, resource_identifier=None):
         records = []
 
-        query = self.resolver.query(self.domain, self.resource)
+        query = dns.resolver.query(self.domain, self.resource)
         if resource_identifier:
             for answer in query:
                 records.append({
@@ -266,7 +265,7 @@ class Resolver:
 
     @property
     def a(self):
-        return self.query('ip')
+        return self.query('ipv4')
 
     @property
     def ns(self):
