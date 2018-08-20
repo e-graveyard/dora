@@ -2,12 +2,15 @@ sudo: false
 language: python
 
 python:
-        - "3.4"
-        - "3.5"
-        - "3.6"
+  - "3.4"
+  - "3.5"
+  - "3.6"
 
 install: "make"
 
 script:
-        - make dep
-        - make test
+  - make dep
+  - make cov
+
+after_success:
+  - codecov
