@@ -1,12 +1,13 @@
 .PHONY: docs
 
-init:
-	pip3 install pipenv --upgrade
+dep:
 	pipenv install
-	pipenv install --dev
 
-ci:
-	pipenv run pytest
+dev:
+	pipenv install --dev
 
 docs:
 	cd ./docs && make html
+
+test:
+	python3 ./src/tests/test_dora.py
