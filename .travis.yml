@@ -11,6 +11,7 @@ install: "make"
 script:
   - make dep
   - make cov
+  - cd src/tests && coverage run tests.py
 
 after_success:
-  - codecov
+  - cd src/tests && codecov

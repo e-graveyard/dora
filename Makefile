@@ -5,7 +5,6 @@ init:
 
 cov: init
 	pip3 install codecov
-	cd ./src/tests && coverage run test_dora.py
 
 dep: init
 	pipenv install
