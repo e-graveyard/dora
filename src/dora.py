@@ -212,40 +212,36 @@ class Response:
 
 
 class Resolver:
-    def __init__(self, domain, resource):
+    def __init__(self, domain, record):
         self.domain = domain
-        self.resource = resource
+        self.record = record
+        self.dns_resources = {
+            'A'    : self.a,
+            'AAAA' : self.aaaa,
+            'CNAME': self.cname,
+            'MX'   : self.mx,
+            'NS'   : self.ns,
+            'TXT'  : self.txt
+        }
+
+    @property
+    def available_resources(self):
+        for key, _ in self.dns_resources.items():
+            yield key
 
     def look(self):
         response = Response(question={
             'domain': self.domain,
-            'record': self.resource
+            'record': self.record
         })
 
         try:
-            records = None
-            if self.resource == 'A':
-                records = self.a
-
-            elif self.resource == 'AAAA':
-                records = self.aaaa
-
-            elif self.resource == 'CNAME':
-                records = self.cname
-
-            elif self.resource == 'MX':
-                records = self.mx
-
-            elif self.resource == 'NS':
-                records = self.ns
-
-            elif self.resource == 'TXT':
-                records = self.txt
-
-            else:
+            if self.record not in self.available_resources:
                 return response.error.unknown_record_type
 
-            return response.answer.success(records)
+            return response.answer.success(
+                [res for res in self.dns_resources[self.record]()]
+            )
 
         except dns.resolver.NoAnswer:
             return response.answer.empty_answer
@@ -254,53 +250,35 @@ class Resolver:
             return response.error.target_not_found
 
     def query(self, resource_identifier=None):
-        records = []
+        query = dns.resolver.query(self.domain, self.record)
 
-        query = dns.resolver.query(self.domain, self.resource)
         if resource_identifier:
             for answer in query:
-                records.append({
-                    resource_identifier: answer.to_text()
-                })
+                yield {resource_identifier: answer.to_text()}
 
         else:
             for answer in query:
-                records.append(answer.to_text())
+                yield answer.to_text()
 
-        return records
-
-    @property
     def a(self):
         return self.query('ipv4')
 
-    @property
     def aaaa(self):
         return self.query('ipv6')
 
-    @property
     def cname(self):
         return self.query('canonical')
 
-    @property
     def ns(self):
         return self.query('nameserver')
 
-    @property
     def txt(self):
         return self.query('text')
 
-    @property
     def mx(self):
-        records = []
-
         for answer in self.query():
             priority, hostname = answer.split(' ')
-            records.append({
-                'hostname': hostname,
-                'priority': priority
-            })
-
-        return records
+            yield {'hostname': hostname, 'priority': priority}
 
 
 class DoraSplashPageHandler(Resource):
