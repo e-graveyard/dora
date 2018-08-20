@@ -5,6 +5,10 @@ D.O.R.A.
         :target: https://travis-ci.org/caianrais/dora
         :alt: Build Status
 
+.. image:: https://codecov.io/gh/caianrais/dora/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/caianrais/dora
+        :alt: Code Coverage Status
+
 .. image:: https://readthedocs.org/projects/dora/badge/?version=latest
         :target: https://dora.readthedocs.io
         :alt: Documentation Status
