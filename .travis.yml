@@ -5,9 +5,10 @@ python:
         - "3.4"
         - "3.5"
         - "3.6"
+        - "3.7"
 
 install: "make"
 
 script:
-        - make init
-        - make ci
+        - make dep
+        - make test
