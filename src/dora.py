@@ -1,8 +1,33 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# Standard libraries. Should not fail.
+import sys
+import textwrap
+from argparse import ArgumentParser
+from argparse import RawTextHelpFormatter
 
-__copyright__ = """
+# Required 3rd-party libraries.
+try:
+    import dns.resolver
+    from flask import Flask
+    from flask import make_response
+    from flask import render_template
+    from flask_restful import Api
+    from flask_restful import Resource
+
+except ImportError as e:
+    print('DORA: impossible to import 3rd-party libraries.\n'
+          'Latest traceback: {0}' . format(e.args[0]))
+
+    sys.exit(1)
+
+
+PROGRAM_NAME    = 'dora'
+PROGRAM_AUTHOR  = 'Caian R. Ertl'
+PROGRAM_VERSION = '0.1.0'
+
+COPYRIGHT_INFO  = """
 ** MIT License **
 
 Copyright (c) 2017, 2018 Caian Rais Ertl
@@ -27,33 +52,6 @@ SOFTWARE.
 """
 
 
-__program__ = 'dora'
-__version__ = '0.1.0'
-__author__ = 'Caian R. Ertl'
-
-
-# Standard libraries. Should not fail.
-import sys
-import textwrap
-from argparse import ArgumentParser
-from argparse import RawTextHelpFormatter
-
-# Required 3rd-parth libraries.
-try:
-    import dns.resolver
-    from flask import Flask
-    from flask import make_response
-    from flask import render_template
-    from flask_restful import Api
-    from flask_restful import Resource
-
-except ImportError as e:
-    print('DORA: impossible to import 3rd-party libraries.\n'
-          'Latest traceback: {0}' . format(e.args[0]))
-
-    sys.exit(1)
-
-
 class CLI:
     """Command-line interface handling class.
 
@@ -64,13 +62,12 @@ class CLI:
     """
 
     def __init__(self):
-        """."""
         # Top-level parser
         self.parser = ArgumentParser(
-                prog=__program__,
+                prog=PROGRAM_NAME,
                 formatter_class=RawTextHelpFormatter,
                 description=textwrap.dedent('''\
-                        DORA\'s command-line interface.
+                        DORA's command-line interface.
 
                         DORA is a web application that provides a simple
                         API for DNS querying through a REST archictecture.
@@ -86,7 +83,7 @@ class CLI:
                 '-v', '--version',
                 action='version',
                 version='{0} ({1})'.format(
-                    __program__, __version__
+                    PROGRAM_NAME, PROGRAM_VERSION
                 ),
                 help='show the application version and exit')
 
@@ -104,7 +101,7 @@ class CLI:
         # Start subcommand
         subcmd_start = self.sub_parser.add_parser(
                 'start',
-                help='starts DORA\'s service')
+                help="starts DORA's service")
 
         # Start subcommand's arguments
         subcmd_start.add_argument(
@@ -126,7 +123,7 @@ class CLI:
         argp = self.parser.parse_args()
 
         if argp.copyright:
-            self.show_copyright()
+            print(COPYRIGHT_INFO)
 
         else:
             if argp.subcmd == 'start':
@@ -135,13 +132,10 @@ class CLI:
                 self._start(argp.port, argp.debug)
 
             else:
-                print('DORA: missing operand.\n'
-                      'Try \'dora --help\' for more information.')
+                print("DORA: missing operand.\n"
+                      "Try 'dora --help' for more information.")
 
                 sys.exit(1)
-
-    def show_copyright(self):
-        print(__copyright__)
 
     def _start(self, f_port, debug_mode):
         dora.run(debug=debug_mode,
