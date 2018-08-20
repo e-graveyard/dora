@@ -1,9 +1,12 @@
 .PHONY: docs
 
-dep:
+init:
+	pip3 install pipenv --upgrade
+
+dep: init
 	pipenv install
 
-dev:
+dev: init
 	pipenv install --dev
 
 docs:
