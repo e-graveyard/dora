@@ -14,4 +14,4 @@ script:
   - cd src/tests && coverage run test_dora.py
 
 after_success:
-  - cd src/tests && codecov
+  - codecov
