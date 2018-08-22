@@ -69,8 +69,8 @@ class CLI:
                 description=textwrap.dedent('''\
                         DORA's command-line interface.
 
-                        DORA is a web application that provides a simple
-                        API for DNS querying through a REST archictecture.
+                        DORA is a web service that provides a simple API
+                        for DNS query through a REST architecture.
                         '''),
                 epilog=textwrap.dedent('''\
                         This is a Free and Open-Source Software (FOSS).
@@ -85,7 +85,7 @@ class CLI:
                 version='{0} ({1})'.format(
                     PROGRAM_NAME, PROGRAM_VERSION
                 ),
-                help='show the application version and exit')
+                help='show the service version and exit')
 
         self.parser.add_argument(
                 '--copyright',
@@ -110,7 +110,7 @@ class CLI:
                 dest='port',
                 type=int,
                 help=textwrap.dedent('''\
-                        sets the port number the application will listen to
+                        sets the port number the service will listen to
                         default value: 80
                         '''))
 
@@ -176,7 +176,7 @@ class Response:
 
         def success(self, records):
             return self.respond(
-                'DNS lookup is successful.', 200, records
+                'The DNS query was successful.', 200, records
             )
 
         @property
