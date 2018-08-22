@@ -293,7 +293,11 @@ api.add_resource(DoraSplashPageHandler, '/')
 api.add_resource(DoraQueryRouteHandler, '/<string:domain>/<string:record>')
 
 
+def main():
+    cli = CLI()
+    cli.act()
+
+
 # Needed for local execution.
 if __name__ == '__main__':
-    _cli = CLI()
-    _cli.act()
+    main()
