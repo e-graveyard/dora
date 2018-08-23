@@ -54,3 +54,17 @@ Similar Projects
 - `dns-api.org`_ :a DNS-lookup service written in Perl.
 
 .. _dns-api.org: https://github.com/skx/dns-api.org
+
+
+TODO
+----
+
+- [ ] Finish the user documentation;
+- [ ] Create code documentation;
+- [ ] 100% covered (*write tests*);
+- [ ] Publish DORA on PyPI;
+- [ ] Dockerized DORA;
+- [ ] Guide: Deploying DORA on Heroku;
+- [ ] Guide: Deploying DORA on AWS Lambda;
+- [ ] Guide: Deploying DORA on Google App Engine;
+- [ ] Guide: Deploying DORA on Google Cloud Functions;
