@@ -31,8 +31,8 @@ Cloud Functions][gcp-cloud-func], [GCP AppEngine][gcp-app-engine],
 
 ## Features
 
-DORA mainly relies on the `dnspython` toolkit. It can query the following
-records:
+`DORA` mainly relies on the [`dnspython`][dnspython] toolkit. It can query the
+following records:
 
 - `A`: IPv4 address;
 - `AAAA`: IPv6 address;
@@ -40,6 +40,8 @@ records:
 - `MX`: Mail exchange (mail transfer agent name);
 - `NS`: Authoritative name server;
 - `TXT`: Text records.
+
+[dnspython]: https://github.com/rthalley/dnspython
 
 
 ## Documentation
