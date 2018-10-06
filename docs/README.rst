@@ -15,9 +15,8 @@
         :alt: License Information
 
 
-***********************
 DORA: DNS Over REST API
-***********************
+=======================
 
 ``DORA`` is a microservice that provides a simple API for DNS querying through
 a REST architecture. It aims to be a consumable API that's easy to digest and
@@ -25,6 +24,7 @@ easy to deploy on cloud-based solutions, such as `AWS Lambda`_, `GCP Cloud
 Functions`_, `GCP AppEngine`_, `Heroku`_ and so on.
 
 .. image:: docs/example.png
+   :align: center
 
 .. _AWS Lambda: https://aws.amazon.com/lambda/
 .. _GCP Cloud Functions: https://cloud.google.com/functions/
@@ -33,7 +33,7 @@ Functions`_, `GCP AppEngine`_, `Heroku`_ and so on.
 
 
 Features
-========
+--------
 
 DORA mainly relies on the ``dnspython`` toolkit. It can query the following
 records:
@@ -47,7 +47,7 @@ records:
 
 
 Documentation
-=============
+-------------
 
 For instructions of usage, installation, deployment and overall documentation
 of the code, `read the docs`_.
@@ -56,7 +56,7 @@ of the code, `read the docs`_.
 
 
 TODO
-====
+----
 
 - Finish the user documentation;
 - Create code documentation;
