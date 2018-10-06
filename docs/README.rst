@@ -24,7 +24,9 @@ easy to deploy on cloud-based solutions, such as `AWS Lambda`_, `GCP Cloud
 Functions`_, `GCP AppEngine`_, `Heroku`_ and so on.
 
 .. raw:: html
-   <img src="https://raw.githubusercontent.com/caianrais/dora/master/docs/example.png" align="center">
+    <p align="center">
+        <img src="docs/example.png">
+    </p>
 
 .. _AWS Lambda: https://aws.amazon.com/lambda/
 .. _GCP Cloud Functions: https://cloud.google.com/functions/
