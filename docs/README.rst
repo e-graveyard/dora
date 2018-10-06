@@ -23,8 +23,8 @@ a REST architecture. It aims to be a consumable API that's easy to digest and
 easy to deploy on cloud-based solutions, such as `AWS Lambda`_, `GCP Cloud
 Functions`_, `GCP AppEngine`_, `Heroku`_ and so on.
 
-.. image:: docs/example.png
-   :align: center
+.. raw:: html
+   <img src="https://raw.githubusercontent.com/caianrais/dora/master/docs/example.png" align="center">
 
 .. _AWS Lambda: https://aws.amazon.com/lambda/
 .. _GCP Cloud Functions: https://cloud.google.com/functions/
