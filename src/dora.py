@@ -176,11 +176,7 @@ class Response:
 
         def success(self, records):
             return self.respond(
-<<<<<<< HEAD
                 'DNS lookup successfully made.', 200, records
-=======
-                'The DNS query was successful.', 200, records
->>>>>>> 6c8caf9c95de3728008841b9b80a87bbfd26ee61
             )
 
         @property
