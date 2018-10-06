@@ -176,7 +176,7 @@ class Response:
 
         def success(self, records):
             return self.respond(
-                'DNS lookup is successful.', 200, records
+                'DNS lookup successfully made.', 200, records
             )
 
         @property
