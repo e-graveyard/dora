@@ -12,3 +12,8 @@ __pycache__
 # sphinx documentation
 docs/_build
 docs/_themes
+
+# pypi
+build
+dist
+dora_ms.egg-info
