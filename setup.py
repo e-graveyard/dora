@@ -20,7 +20,7 @@ AUTHOR          = 'Caian R. Ertl'
 REQUIRES_PYTHON = '>=3.4.0'
 VERSION         = '0.2.0b'
 REQUIRED        = [
-    'flask', 'flask-restful', 'dnspython'
+    'flask-restful', 'dnspython'
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
