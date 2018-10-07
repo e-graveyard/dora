@@ -11,8 +11,6 @@ from argparse import RawTextHelpFormatter
 try:
     import dns.resolver
     from flask import Flask
-    from flask import make_response
-    from flask import render_template
     from flask_restful import Api
     from flask_restful import Resource
 
@@ -275,11 +273,6 @@ class Resolver:
             yield {'hostname': hostname, 'priority': priority}
 
 
-class DoraSplashPageHandler(Resource):
-    def get(self):
-        return make_response(render_template('splash.html'))
-
-
 class DoraQueryRouteHandler(Resource):
     def get(self, domain, record):
         resolver = Resolver(domain, str.upper(record))
@@ -289,7 +282,6 @@ class DoraQueryRouteHandler(Resource):
 dora = Flask(__name__)
 
 api = Api(dora)
-api.add_resource(DoraSplashPageHandler, '/')
 api.add_resource(DoraQueryRouteHandler, '/<string:domain>/<string:record>')
 
 
