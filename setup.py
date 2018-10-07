@@ -18,7 +18,7 @@ URL             = 'https://github.com/caianrais/dora'
 EMAIL           = 'caianrais@pm.me'
 AUTHOR          = 'Caian R. Ertl'
 REQUIRES_PYTHON = '>=3.4.0'
-VERSION         = '0.2.0b0'
+VERSION         = '0.2.1b0'
 REQUIRED        = [
     'flask-restful', 'dnspython'
 ]
