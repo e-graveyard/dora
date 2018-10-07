@@ -18,7 +18,7 @@ URL             = 'https://github.com/caianrais/dora'
 EMAIL           = 'caianrais@pm.me'
 AUTHOR          = 'Caian R. Ertl'
 REQUIRES_PYTHON = '>=3.4.0'
-VERSION         = 'v0.2.0-beta'
+VERSION         = '0.2.0b'
 REQUIRED        = [
     'flask', 'flask-restful', 'dnspython'
 ]
@@ -86,7 +86,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=('tests',)),
+    packages=find_packages(),
     install_requires=REQUIRED,
     include_package_data=True,
     license='MIT',
