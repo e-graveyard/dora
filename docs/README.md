@@ -20,7 +20,7 @@ Cloud Functions][gcp-cloud-func], [GCP AppEngine][gcp-app-engine],
 [Heroku][heroku] and so on.
 
 <p align="center">
-    <img src="docs/example.png">
+    <img src="docs/_static/example.png">
 </p>
 
 [lambda]: https://aws.amazon.com/lambda/
