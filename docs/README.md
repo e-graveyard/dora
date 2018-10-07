@@ -55,8 +55,8 @@ of the code, [read the docs](http://dora.rtfd.io).
 - [ ] Finish the user documentation;
 - [ ] Create code documentation;
 - [ ] 100% covered (*write tests*);
-- [ ] Publish DORA on PyPI;
-- [ ] Dockerized DORA;
+- [X] Publish DORA on PyPI;
+- [X] Dockerized DORA;
 - [ ] Guide: Deploying DORA on Heroku;
 - [ ] Guide: Deploying DORA on AWS Lambda;
 - [ ] Guide: Deploying DORA on Google App Engine;
