@@ -12,13 +12,13 @@ from setuptools import Command
 
 
 # Metadata
-NAME            = 'DORA'
+NAME            = 'dora-ms'
 DESCRIPTION     = 'A cloud-ready DNS query API'
 URL             = 'https://github.com/caianrais/dora'
 EMAIL           = 'caianrais@pm.me'
 AUTHOR          = 'Caian R. Ertl'
 REQUIRES_PYTHON = '>=3.4.0'
-VERSION         = '0.2.0b'
+VERSION         = '0.2.0b0'
 REQUIRED        = [
     'flask-restful', 'dnspython'
 ]
@@ -103,6 +103,11 @@ setup(
         'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
+    entry_points={
+        'console_scripts': [
+            'dora = dora.dora:main'
+        ]
+    },
     # $ setup.py publish support.
     cmdclass={
         'upload': UploadCommand,
