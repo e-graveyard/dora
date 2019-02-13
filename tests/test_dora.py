@@ -13,15 +13,42 @@ sys.path.append(
 from dora import dora
 
 
+TARGET_DOMAIN = 'caian.org'
+
+
 class DoraTests(unittest.TestCase):
+    def resource(self, kind, domain=TARGET_DOMAIN):
+        return '/{}/{}'.format(domain, kind)
+
     def setUp(self):
         self.app = dora.test_client()
         self.app.testing = True
 
-    def test_home_page(self):
-        result = self.app.get('/')
+    def test_a_lookup(self):
+        result = self.app.get(self.resource('a'))
         self.assertEqual(result.status_code, 200)
 
+    def test_aaaa_lookup(self):
+        result = self.app.get(self.resource('aaaa'))
+        self.assertEqual(result.status_code, 200)
+
+    '''
+    def test_cname_lookup(self):
+        result = self.app.get(self.resource('cname'))
+        self.assertEqual(result.status_code, 200)
+    '''
+
+    def test_mx_lookup(self):
+        result = self.app.get(self.resource('mx'))
+        self.assertEqual(result.status_code, 200)
+
+    def test_ns_lookup(self):
+        result = self.app.get(self.resource('ns'))
+        self.assertEqual(result.status_code, 200)
+
+    def test_txt_lookup(self):
+        result = self.app.get(self.resource('txt'))
+        self.assertEqual(result.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
