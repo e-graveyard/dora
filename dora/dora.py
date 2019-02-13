@@ -1,31 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Standard libraries. Should not fail.
-import sys
-import textwrap
-from argparse import ArgumentParser
-from argparse import RawTextHelpFormatter
-
-# Required 3rd-party libraries.
-try:
-    import dns.resolver
-    from flask import Flask
-    from flask_restful import Api
-    from flask_restful import Resource
-
-except ImportError as e:
-    print('DORA: impossible to import 3rd-party libraries.\n'
-          'Latest traceback: {0}' . format(e.args[0]))
-
-    sys.exit(1)
-
-
-PROGRAM_NAME    = 'dora'
-PROGRAM_AUTHOR  = 'Caian R. Ertl'
-PROGRAM_VERSION = '0.1.0'
-
-COPYRIGHT_INFO  = """
+"""
 ** MIT License **
 
 Copyright (c) 2017, 2018, 2019 Caian R. Ertl
@@ -48,6 +24,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
+
+# Standard libraries. Should not fail.
+import sys
+import textwrap
+from argparse import ArgumentParser
+from argparse import RawTextHelpFormatter
+
+# Required 3rd-party libraries.
+try:
+    import dns.resolver
+    from flask import Flask
+    from flask_restful import Api
+    from flask_restful import Resource
+
+except ImportError as error:
+    print('DORA: impossible to import 3rd-party libraries.\n'
+          'Latest traceback: {0}' . format(error.args[0]))
+
+    sys.exit(1)
+
+
+PROGRAM_NAME    = 'dora'
+PROGRAM_AUTHOR  = 'Caian R. Ertl'
+PROGRAM_VERSION = '0.1.0'
 
 
 class CLI:
@@ -87,12 +88,6 @@ class CLI:
             ),
             help='show the service version and exit')
 
-        self.parser.add_argument(
-            '--copyright',
-            action='store_true',
-            dest='copyright',
-            help='show the copyright information and exit')
-
         # Initializes the subparser
         self.sub_parser = self.parser.add_subparsers(
             dest='subcmd',
@@ -119,15 +114,14 @@ class CLI:
             action='store_true',
             help='enable debug mode')
 
-    def act(self):
+    def act(self, args=None):
         """
         todo: documentation
         """
-        argp = self.parser.parse_args()
+        if args is None:
+            args = sys.argv[1:]
 
-        if argp.copyright:
-            print(COPYRIGHT_INFO)
-            return
+        argp = self.parser.parse_args(args)
 
         if argp.subcmd == 'start':
             dora.run(debug=argp.debug,
@@ -135,11 +129,10 @@ class CLI:
                      use_reloader=True,
                      port=argp.port or 80)
 
-        else:
-            print("DORA: missing operand.\n"
-                  "Try 'dora --help' for more information.")
+        print("DORA: missing operand.\n"
+              "Try 'dora --help' for more information.")
 
-            sys.exit(1)
+        return 1
 
 
 class Response:
@@ -354,4 +347,4 @@ api.add_resource(DoraQueryRouteHandler, '/<string:domain>/<string:record>')
 # Needed for local execution.
 if __name__ == '__main__':
     cli = CLI()
-    cli.act()
+    sys.exit(cli.act())
