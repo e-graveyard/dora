@@ -1,6 +1,6 @@
 [![Buid Status][build]][travis] [![Code Quality][quality]][lgtm] [![Code Coverage][cov]][codecov] [![Documentation Status][doc]][readthedocs] [![License Information][license]][mit]
 
-[build]: https://travis-ci.org/caieretl/dora.svg?branch=master
+[build]: https://travis-ci.org/caiertl/dora.svg?branch=master
 [quality]: https://img.shields.io/lgtm/grade/python/g/caiertl/dora.svg?logo=lgtm&logoWidth=18
 [cov]: https://codecov.io/gh/caiertl/dora/branch/master/graph/badge.svg
 [doc]: https://readthedocs.org/projects/dora/badge/?version=latest
