@@ -1,16 +1,16 @@
 [![Buid Status][build]][travis] [![Code Quality][quality]][lgtm] [![Code Coverage][cov]][codecov] [![Documentation Status][doc]][readthedocs] [![License Information][license]][mit]
 
-[build]: https://travis-ci.org/caianrais/dora.svg?branch=master
+[build]: https://travis-ci.org/caieretl/dora.svg?branch=master
 [quality]: https://img.shields.io/lgtm/grade/python/g/caiertl/dora.svg?logo=lgtm&logoWidth=18
-[cov]: https://codecov.io/gh/caianrais/dora/branch/master/graph/badge.svg
+[cov]: https://codecov.io/gh/caiertl/dora/branch/master/graph/badge.svg
 [doc]: https://readthedocs.org/projects/dora/badge/?version=latest
-[license]: https://img.shields.io/github/license/caianrais/dora.svg
+[license]: https://img.shields.io/github/license/caiertl/dora.svg
 
-[travis]: https://travis-ci.org/caianrais/dora
+[travis]: https://travis-ci.org/caiertl/dora
 [lgtm]: https://lgtm.com/projects/g/caiertl/dora/context:python
-[codecov]: https://codecov.io/gh/caianrais/dora
+[codecov]: https://codecov.io/gh/caiertl/dora
 [readthedocs]: https://dora.readthedocs.io
-[mit]: https://github.com/caianrais/dora/blob/master/LICENSE
+[mit]: https://github.com/caiertl/dora/blob/master/LICENSE
 
 
 # DORA: DNS over REST API
