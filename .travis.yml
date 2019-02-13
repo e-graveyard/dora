@@ -5,13 +5,14 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
 
 install: "make"
 
 script:
-  - make dep
-  - make cov
-  - cd src/tests && coverage run test_dora.py
+  - pip3 install pipenv codecov --upgrade
+  - pipenv install
+  - coverage run src/tests/test_dora.py
 
 after_success:
   - codecov
