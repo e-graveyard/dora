@@ -180,16 +180,10 @@ class Response:
         @property
         def empty_answer(self):
             return self.respond(
-                'The response does not contain an answer to the question.', 204
+                'The response does not contain an answer to the question.', 200
             )
 
     class Error:
-        @property
-        def resource_not_found(self):
-            return Response.respond(
-                'The specified DNS resource does not exists.', 404
-            )
-
         @property
         def target_not_found(self):
             return Response.respond(
