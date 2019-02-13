@@ -24,6 +24,10 @@ class DoraTests(unittest.TestCase):
         self.app = dora.test_client()
         self.app.testing = True
 
+    def test_root(self):
+        result = self.app.get('/')
+        self.assertEqual(result.status_code, 404)
+
     def test_a_lookup(self):
         result = self.app.get(self.resource('a'))
         self.assertEqual(result.status_code, 200)
@@ -32,11 +36,9 @@ class DoraTests(unittest.TestCase):
         result = self.app.get(self.resource('aaaa'))
         self.assertEqual(result.status_code, 200)
 
-    '''
     def test_cname_lookup(self):
         result = self.app.get(self.resource('cname'))
         self.assertEqual(result.status_code, 200)
-    '''
 
     def test_mx_lookup(self):
         result = self.app.get(self.resource('mx'))
@@ -49,6 +51,15 @@ class DoraTests(unittest.TestCase):
     def test_txt_lookup(self):
         result = self.app.get(self.resource('txt'))
         self.assertEqual(result.status_code, 200)
+
+    def test_unknown_record_type(self):
+        result = self.app.get(self.resource('unknown'))
+        self.assertEqual(result.status_code, 400)
+
+    def test_domain_target_not_found(self):
+        result = self.app.get(self.resource('txt', 'caian.orgx'))
+        self.assertEqual(result.status_code, 404)
+
 
 if __name__ == '__main__':
     unittest.main()
