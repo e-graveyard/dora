@@ -1,16 +1,16 @@
 [![Buid Status][build]][travis] [![Code Quality][quality]][lgtm] [![Code Coverage][cov]][codecov] [![Documentation Status][doc]][readthedocs] [![License Information][license]][mit]
 
-[build]: https://travis-ci.org/caiertl/dora.svg?branch=master
-[quality]: https://img.shields.io/lgtm/grade/python/g/caiertl/dora.svg?logo=lgtm&logoWidth=18
-[cov]: https://codecov.io/gh/caiertl/dora/branch/master/graph/badge.svg
+[build]: https://travis-ci.org/caian-org/dora.svg?branch=master
+[quality]: https://img.shields.io/lgtm/grade/python/g/caian-org/dora.svg?logo=lgtm&logoWidth=18
+[cov]: https://codecov.io/gh/caian-org/dora/branch/master/graph/badge.svg
 [doc]: https://readthedocs.org/projects/dora/badge/?version=latest
-[license]: https://img.shields.io/github/license/caiertl/dora.svg
+[license]: https://img.shields.io/github/license/caian-org/dora.svg
 
-[travis]: https://travis-ci.org/caiertl/dora
-[lgtm]: https://lgtm.com/projects/g/caiertl/dora/context:python
-[codecov]: https://codecov.io/gh/caiertl/dora
+[travis]: https://travis-ci.org/caian-org/dora
+[lgtm]: https://lgtm.com/projects/g/caian-org/dora/context:python
+[codecov]: https://codecov.io/gh/caian-org/dora
 [readthedocs]: https://dora.readthedocs.io
-[mit]: https://github.com/caiertl/dora/blob/master/LICENSE
+[mit]: https://github.com/caian-org/dora/blob/master/LICENSE
 
 
 # DORA: DNS over REST API
